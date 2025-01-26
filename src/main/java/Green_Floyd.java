@@ -1,7 +1,39 @@
-public class Green_Floyd {
-    public String separateBar = new String("------------------------------------------");
+import java.util.Scanner;
 
-    public void printSeparateBar(){
+public class Green_Floyd {
+    public String separateBar = new String("#########################################################");
+    private boolean isRunning;
+
+    public Green_Floyd() {
+        this.isRunning = true;
+    }
+    public void run() {
+        Scanner scanner = new Scanner(System.in);
+        while (isRunning) {
+            String userInput = scanner.nextLine();
+            handleCommand(userInput);
+        }
+    }
+
+    public void echo(String input) {
+        printSeparateBar();
+        System.out.println(input);
+        printSeparateBar();
+    }
+    public void exitChat() {
+        farewell();
+        isRunning = false;
+    }
+    public void handleCommand (String input) {
+        switch (input.trim().toLowerCase()) {
+            case "bye":
+                exitChat();
+                break;
+            default:
+                echo(input);
+        }
+    }
+    public void printSeparateBar() {
         System.out.println(separateBar);
     }
 
@@ -25,6 +57,7 @@ public class Green_Floyd {
                 + "|____/ \\__,_|_|\\_\\___|\n";
         System.out.println("Hello from\n" + logo);
         chatBot.greeting();
+        chatBot.run();
         chatBot.farewell();
     }
 }
