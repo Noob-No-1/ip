@@ -1,9 +1,11 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Green_Floyd {
     public String separateBar = new String("#########################################################");
     private boolean isRunning;
 
+    private ArrayList<String> list = new ArrayList<>();
     public Green_Floyd() {
         this.isRunning = true;
     }
@@ -24,27 +26,49 @@ public class Green_Floyd {
         farewell();
         isRunning = false;
     }
-    public void handleCommand (String input) {
+    public void handleCommand (String input) { //handle different behaviors base on user input
         switch (input.trim().toLowerCase()) {
             case "bye":
                 exitChat();
                 break;
+            case "list":
+                printSeparateBar();
+                listTask();
+                printSeparateBar();
+                break;
             default:
-                echo(input);
+                //echo(input);
+                printSeparateBar();
+                addToList(input);
+                printSeparateBar();
         }
     }
-    public void printSeparateBar() {
+    public void printSeparateBar() { //print separation bar for aesthetic reason
         System.out.println(separateBar);
     }
 
-
-    public void greeting() {
+    public void listTask() { //List all added tasks in the list, print it in console
+        int tasks = list.size();
+        if (tasks == 0) {
+            System.out.println("No tasks added yet! Try typing tasks to me, I will add them to list");
+        } else {
+            for (int i = 0; i < tasks; i++) {
+                System.out.println((i + 1) + ". " + list.get(i));
+            }
+        }
+    }
+    public void addToList(String input) { //add the input task into list
+        list.add(input);
+        System.out.println("Added: " + input);
+    }
+    public void greeting() { //say hello :)
         printSeparateBar();
         System.out.println("Hello! I'm Green Floyed \n" + "What can I do for you?\n");
         printSeparateBar();
     }
 
-    public void farewell() {
+    public void farewell() { //say byebye
+        printSeparateBar();
         System.out.println("Till next time. See you! \n");
         printSeparateBar();
     }
@@ -58,6 +82,6 @@ public class Green_Floyd {
         System.out.println("Hello from\n" + logo);
         chatBot.greeting();
         chatBot.run();
-        chatBot.farewell();
+        //chatBot.farewell();
     }
 }
