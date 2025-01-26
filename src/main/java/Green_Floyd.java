@@ -75,7 +75,7 @@ public class Green_Floyd {
     }
 
     public void printAddedCase(Task t) {
-        System.out.println("Got it, added tasks to the task list: ");
+        System.out.println("Got it, added tasks to the task list:");
         System.out.println("  " + t.toString());
         System.out.println("Currently have " + list.size() + " tasks in your list");
     }
@@ -119,7 +119,7 @@ public class Green_Floyd {
         } else {
             for (int i = 0; i < tasks; i++) {
                 Task task = list.get(i);
-                System.out.println(task.toString());
+                System.out.println( (i + 1) + "." + task.toString());
             }
         }
     }
@@ -163,13 +163,13 @@ public class Green_Floyd {
     }
     public void greeting() { //say hello :)
         printSeparateBar();
-        System.out.println("Hello! I'm Green Floyed \n" + "What can I do for you?\n");
+        System.out.println("Hello! I'm Green Floyed\n" + "What can I do for you?\n");
         printSeparateBar();
     }
 
     public void farewell() { //say byebye
         printSeparateBar();
-        System.out.println("Till next time. See you! \n");
+        System.out.println("Till next time. See you!\n");
         printSeparateBar();
     }
     public static void main(String[] args) {
