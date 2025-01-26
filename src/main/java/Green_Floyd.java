@@ -40,37 +40,55 @@ public class Green_Floyd {
                 listTask();
                 printSeparateBar();
                 break;
-            case "mark":
+            case "mark": //input structure: action + no.
                 printSeparateBar();
                 markDone(action, details);
                 printSeparateBar();
                 break;
-            case "unmark":
+            case "unmark"://input structure: action + no.
                 printSeparateBar();
                 undone(action, details);
                 printSeparateBar();
                 break;
+            case "todo":
+                printSeparateBar();
+                addToList(details, "T");
+                printSeparateBar();
+                break;
+            case "deadline":
+                printSeparateBar();
+                addToList(details, "D");
+                printSeparateBar();
+                break;
+            case "event":
+                printSeparateBar();
+                addToList(details, "E");
+                printSeparateBar();
+                break;
             default:
-                //echo(input);
-                printSeparateBar();
-                addToList(input);
-                printSeparateBar();
+                System.out.println("Unknown type of instruction, please adhere to the input format. ");
+
         }
     }
     public void printSeparateBar() { //print separation bar for aesthetic reason
         System.out.println(separateBar);
     }
 
+    public void printAddedCase(Task t) {
+        System.out.println("Got it, added tasks to the task list: ");
+        System.out.println("  " + t.toString());
+        System.out.println("Currently have " + list.size() + " tasks in your list");
+    }
     public void markDone(String action, String details) {
         try {
             int index = Integer.parseInt(details);
-            if (index < 0 || index >= list.size()) {
+            if (index < 0 || index > list.size()) {
                 throw new IndexOutOfBoundsException("Invalid index number!");
             }
             Task task = list.get(index - 1);
             task.markAsDone();
-            System.out.println("Nice! I've marked this task done!\n");
-            System.out.println("[" + task.getStatus() + "] " + task.description);
+            System.out.println("Nice! I've marked this task done:\n");
+            System.out.println(task.toString());
         } catch (IndexOutOfBoundsException e) {
             System.out.println("Invalid index");
         } catch (NumberFormatException e) {
@@ -81,13 +99,13 @@ public class Green_Floyd {
     public void undone(String action, String details) {
         try {
             int index = Integer.parseInt(details);
-            if (index < 0 || index >= list.size()) {
+            if (index < 0 || index > list.size()) {
                 throw new IndexOutOfBoundsException("Invalid index number!");
             }
             Task task = list.get(index - 1);
             task.markAsUndone();
-            System.out.println("Nice! I've marked this task done!\n");
-            System.out.println("[" + task.getStatus() + "] " + task.description);
+            System.out.println("Ok, I've marked this task as not done yet:\n");
+            System.out.println(task.toString());
         } catch (IndexOutOfBoundsException e) {
             System.out.println("Invalid index");
         } catch (NumberFormatException e) {
@@ -101,16 +119,47 @@ public class Green_Floyd {
         } else {
             for (int i = 0; i < tasks; i++) {
                 Task task = list.get(i);
-                String description = task.description;
-                String status = task.getStatus();
-                System.out.println((i + 1) + ". " + "[" + status + "] " + description );
+                System.out.println(task.toString());
             }
         }
     }
-    public void addToList(String input) { //add the input task into list
-        Task task = new Task(input);
-        list.add(task);
-        System.out.println("Added: " + input);
+    public void addToList(String input, String type) { //add the input task into list
+        switch (type) {
+            case "T":
+                ToDos t = new ToDos(input);
+                list.add(t);
+                printAddedCase(t);
+                break;
+            case "D":
+                String[] parts = input.split("/by", 2);
+                if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
+                    System.out.println("Error: Please specify a valid description and deadline.");
+                    return;
+                }
+                Deadlines d = new Deadlines(parts[0].trim(), parts[1].trim());
+                list.add(d);
+                printAddedCase(d);
+                break;
+            case "E":
+                String[] parts1 = input.split("/from", 2);
+                if (parts1.length < 2) {
+                    System.out.println("Error: Please specify a valid description, start, and end time.");
+                    return;
+                }
+
+                String description = parts1[0].trim();
+                String[] timeParts = parts1[1].split("/to", 2);
+                if (timeParts.length < 2 || description.isEmpty() || timeParts[0].trim().isEmpty() || timeParts[1].trim().isEmpty()) {
+                    System.out.println("Error: Please specify a valid description, start, and end time.");
+                    return;
+                }
+                Events e = new Events(description, timeParts[0].trim(), timeParts[1].trim());
+                list.add(e);
+                printAddedCase(e);
+                break;
+            default:
+                System.out.println("Unknown task type.");
+        }
     }
     public void greeting() { //say hello :)
         printSeparateBar();
