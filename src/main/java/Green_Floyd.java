@@ -1,13 +1,19 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Green_Floyd {
-    public String separateBar = new String("#########################################################");
+    public String separateBar = "#########################################################";
     private boolean isRunning;
 
     private ArrayList<Task> list = new ArrayList<>();
+    private final String dataPath = "data/task_history.txt";
     public Green_Floyd() {
         this.isRunning = true;
+        loadTask();
     }
     public void run() {
         Scanner scanner = new Scanner(System.in);
@@ -17,6 +23,53 @@ public class Green_Floyd {
         }
     }
 
+    public void loadTask() {
+        File data = new File(dataPath);
+        if (!data.exists()) {
+            System.out.println("File path invalid, please contact developer to fix the issue");
+            return;
+        }
+        try ( Scanner scanner = new Scanner(data)) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                Task task = parseLine(line);
+                if (task != null){
+                    list.add(task);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("File does not exist, WAMP WAMP!");
+
+        }
+    }
+
+    public Task parseLine(String taskString) {
+        try {
+            String[] parts = taskString.split(" \\| ");
+            String type = parts[0];
+            boolean status = parts[1].equals("1");
+            String description = parts[2];
+
+            switch (type) {
+            case ("T"):
+                return new ToDos(description, status);
+            case ("E"):
+                String from = parts[3];
+                String to = parts[4];
+                return new Events(description, from, to, status);
+            case ("D"):
+                String by = parts[3];
+                return new Deadlines(description, by, status);
+
+            }
+        } catch (Exception e) {
+            System.out.println("Skipping invalid line" + taskString);
+
+        }
+        return null;
+
+    }
+
     public void echo(String input) {
         printSeparateBar();
         System.out.println(input);
@@ -24,8 +77,23 @@ public class Green_Floyd {
     }
     public void exitChat() {
         farewell();
+        saveTasks();
         isRunning = false;
     }
+
+    public void saveTasks() {
+        try {
+            File file = new File(dataPath);
+            PrintWriter writer = new PrintWriter(file);
+            for (Task task : list) {
+                writer.println(task.toFileFormat());
+            }
+            writer.close();
+        } catch (FileNotFoundException e){
+            System.out.println("Error saving files.");
+        }
+    }
+
     public void handleCommand (String input) { //handle different behaviors base on user input
         //formatting input
         String[] parts = input.split(" ", 2);
@@ -154,7 +222,7 @@ public class Green_Floyd {
         } else {
             switch (type) {
                 case "T":
-                    ToDos t = new ToDos(input);
+                    ToDos t = new ToDos(input, false);
                     list.add(t);
                     printAddedCase(t);
                     break;
@@ -164,7 +232,7 @@ public class Green_Floyd {
                         System.out.println("Error: Please specify a valid description and deadline.");
                         return;
                     }
-                    Deadlines d = new Deadlines(parts[0].trim(), parts[1].trim());
+                    Deadlines d = new Deadlines(parts[0].trim(), parts[1].trim(), false);
                     list.add(d);
                     printAddedCase(d);
                     break;
@@ -181,7 +249,7 @@ public class Green_Floyd {
                         System.out.println("Error: Please specify a valid description, start, and end time.");
                         return;
                     }
-                    Events e = new Events(description, timeParts[0].trim(), timeParts[1].trim());
+                    Events e = new Events(description, timeParts[0].trim(), timeParts[1].trim(), false);
                     list.add(e);
                     printAddedCase(e);
                     break;
@@ -209,6 +277,8 @@ public class Green_Floyd {
                 + "| |_| | |_| |   <  __/\n"
                 + "|____/ \\__,_|_|\\_\\___|\n";
         System.out.println("Hello from\n" + logo);
+        // load in history data from ./data/task_history.txt as strings
+
         chatBot.greeting();
         chatBot.run();
         //chatBot.farewell();
