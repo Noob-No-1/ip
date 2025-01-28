@@ -1,22 +1,29 @@
-public class Task {
+abstract class Task {
     protected String description;
     protected boolean isDone;
+
+    public Task(String description, boolean status) {
+        this.description = description;
+        this.isDone = status;
+    }
 
     public Task(String description) {
         this.description = description;
         this.isDone = false;
     }
 
+    public abstract String toFileFormat();
+
     public String getStatus() {
-        return (isDone ?"X" :" ");
+        return (isDone ?"Done!" :" ");
     }
 
     public void markAsDone() {
-        isDone = true;
+        this.isDone = true;
     }
 
     public void markAsUndone() {
-        isDone = false;
+        this.isDone = false;
     }
 
     @Override
