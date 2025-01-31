@@ -1,3 +1,5 @@
+package duke;
+
 abstract class Task {
     protected String description;
     protected boolean isDone;
@@ -5,11 +7,6 @@ abstract class Task {
     public Task(String description, boolean status) {
         this.description = description;
         this.isDone = status;
-    }
-
-    public Task(String description) {
-        this.description = description;
-        this.isDone = false;
     }
 
     public abstract String toFileFormat();

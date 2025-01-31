@@ -1,4 +1,8 @@
-public class ToDos extends Task{
+package duke;
+
+import duke.Task;
+
+public class ToDos extends Task {
     private final String type = "T";
     public String description;
     public ToDos(String description, boolean status) {

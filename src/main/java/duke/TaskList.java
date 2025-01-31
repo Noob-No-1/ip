@@ -1,3 +1,8 @@
+package duke;
+
+import duke.BrainrotException;
+import duke.Task;
+
 import java.util.ArrayList;
 
 /**

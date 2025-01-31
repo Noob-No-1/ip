@@ -1,3 +1,9 @@
+package duke;
+
+import duke.Deadlines;
+import duke.Events;
+import duke.Task;
+
 /**
  * Parses user input into an action and details.
  */
