@@ -1,289 +1,210 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Green_Floyd {
-    public String separateBar = "#########################################################";
-    private boolean isRunning;
+    private Storage storage;
+    private TaskList tasks;
+    private Ui ui;
 
-    private ArrayList<Task> list = new ArrayList<>();
-    private final String dataPath = "data/task_history.txt";
-    public Green_Floyd() {
-        this.isRunning = true;
-        loadTask();
+    public Green_Floyd(String filePath) {
+        ui = new Ui();
+        storage = new Storage(filePath);
+        try {
+            tasks = new TaskList(storage.load());
+        } catch (BrainrotException e) {
+            ui.showLoadingError();
+            tasks = new TaskList();
+        }
     }
+
     public void run() {
-        Scanner scanner = new Scanner(System.in);
-        while (isRunning) {
-            String userInput = scanner.nextLine();
-            handleCommand(userInput);
-        }
-    }
-
-    public void loadTask() {
-        File data = new File(dataPath);
-        if (!data.exists()) {
-            System.out.println("File path invalid, please contact developer to fix the issue");
-            return;
-        }
-        try ( Scanner scanner = new Scanner(data)) {
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                Task task = parseLine(line);
-                if (task != null){
-                    list.add(task);
-                }
+        ui.greeting();
+        boolean isExit = false;
+        while (!isExit) {
+            try {
+                String fullCommand = ui.readCommand();
+                ui.printSeparateBar();
+                isExit = handleCommand(fullCommand);
+            } catch (BrainrotException e) {
+                ui.showError(e.getMessage());
+            } finally {
+                ui.printSeparateBar();
             }
-        } catch (FileNotFoundException e) {
-            System.out.println("File does not exist, WAMP WAMP!");
-
         }
     }
 
-    public Task parseLine(String taskString) {
-        try {
-            String[] parts = taskString.split(" \\| ");
-            String type = parts[0];
-            boolean status = parts[1].equals("1");
-            String description = parts[2];
+    /**
+     * Handles the user command and performs the corresponding action.
+     *
+     * @param input The full command entered by the user.
+     * @return True if the command is "bye", false otherwise.
+     * @throws BrainrotException If the command is invalid or an error occurs.
+     */
+    private boolean handleCommand(String input) throws BrainrotException {
+        String[] parsedInput = Parser.parseInput(input);
+        String action = parsedInput[0];
+        String details = parsedInput[1];
 
-            switch (type) {
-            case ("T"):
-                return new ToDos(description, status);
-            case ("E"):
-                String from = parts[3];
-                String to = parts[4];
-                return new Events(description, from, to, status);
-            case ("D"):
-                String by = parts[3];
-                return new Deadlines(description, by, status);
-
-            default:
-                System.out.println("Wrong format saved bro, check ur data format stored");
-
-            }
-        } catch (Exception e) {
-            System.out.println("Skipping invalid line" + taskString);
-
-        }
-        return null;
-
-    }
-
-    public void echo(String input) {
-        printSeparateBar();
-        System.out.println(input);
-        printSeparateBar();
-    }
-    public void exitChat() {
-        farewell();
-        saveTasks();
-        isRunning = false;
-    }
-
-    public void saveTasks() {
-        try {
-            File file = new File(dataPath);
-            PrintWriter writer = new PrintWriter(file);
-            for (Task task : list) {
-                writer.println(task.toFileFormat());
-            }
-            writer.close();
-        } catch (FileNotFoundException e){
-            System.out.println("Error saving files.");
-        }
-    }
-
-    public void handleCommand (String input) { //handle different behaviors base on user input
-        //formatting input
-        String[] parts = input.split(" ", 2);
-        String action = parts[0].trim().toLowerCase();
-        String details = parts.length > 1 ? parts[1].trim() :"";
         switch (action) {
-            case "bye":
-                exitChat();
-                break;
-            case "list":
-                printSeparateBar();
-                listTask();
-                printSeparateBar();
-                break;
-            case "mark": //input structure: action + no.
-                printSeparateBar();
-                markDone(action, details);
-                printSeparateBar();
-                break;
-            case "unmark"://input structure: action + no.
-                printSeparateBar();
-                undone(action, details);
-                printSeparateBar();
-                break;
-            case "delete"://input structure: action + no.
-                printSeparateBar();
-                deleteTask(action, details);
-                printSeparateBar();
-                break;
-            case "todo":
-                printSeparateBar();
-                addToList(details, "T");
-                printSeparateBar();
-                break;
-            case "deadline":
-                printSeparateBar();
-                addToList(details, "D");
-                printSeparateBar();
-                break;
-            case "event":
-                printSeparateBar();
-                addToList(details, "E");
-                printSeparateBar();
-                break;
-            default:
-                printSeparateBar();
-                System.out.println("Unknown type of instruction, please adhere to the input format. ");
-                printSeparateBar();
+        case "bye":
+            ui.bye();
+            return true;
+        case "list":
+            listTasks();
+            break;
+        case "mark":
+            markTaskAsDone(details);
+            break;
+        case "unmark":
+            markTaskAsUndone(details);
+            break;
+        case "delete":
+            deleteTask(details);
+            break;
+        case "todo":
+            addTodo(details);
+            break;
+        case "deadline":
+            addDeadline(details);
+            break;
+        case "event":
+            addEvent(details);
+            break;
+        default:
+            throw new BrainrotException("Unknown command: " + action);
         }
-    }
-    public void printSeparateBar() { //print separation bar for aesthetic reason
-        System.out.println(separateBar);
+        return false;
     }
 
-    public void printAddedCase(Task t) {
-        System.out.println("Got it, added tasks to the task list:");
-        System.out.println("  " + t.toString());
-        System.out.println("Currently have " + list.size() + " tasks in your list");
-    }
-
-    public void deleteTask(String action, String taskNum) {
-        try {
-            int index = Integer.parseInt(taskNum);
-            if (index < 0 || index > list.size()) {
-                throw new IndexOutOfBoundsException("Invalid index number!");
-            }
-            Task task = list.get(index - 1);
-            System.out.println("Noted. Deleted this task:\n");
-            System.out.println("  " + task.toString());
-            list.remove(index - 1);
-            System.out.println("Now you have " + list.size() + " tasks in the lists.");
-        } catch (IndexOutOfBoundsException e) {
-            System.out.println("Invalid index");
-        } catch (NumberFormatException e) {
-            System.out.println("Please enter command with a valid task number e.g. 'mark 2'");
-        }
-    }
-    public void markDone(String action, String details) {
-        try {
-            int index = Integer.parseInt(details);
-            if (index < 0 || index > list.size()) {
-                throw new IndexOutOfBoundsException("Invalid index number!");
-            }
-            Task task = list.get(index - 1);
-            task.markAsDone();
-            System.out.println("Nice! I've marked this task done:\n");
-            System.out.println(task.toString());
-        } catch (IndexOutOfBoundsException e) {
-            System.out.println("Invalid index");
-        } catch (NumberFormatException e) {
-            System.out.println("Please enter command with a valid task number e.g. 'mark 2'");
-        }
-    }
-
-    public void undone(String action, String details) {
-        try {
-            int index = Integer.parseInt(details);
-            if (index < 0 || index > list.size()) {
-                throw new IndexOutOfBoundsException("Invalid index number!");
-            }
-            Task task = list.get(index - 1);
-            task.markAsUndone();
-            System.out.println("Ok, I've marked this task as not done yet:\n");
-            System.out.println(task.toString());
-        } catch (IndexOutOfBoundsException e) {
-            System.out.println("Invalid index");
-        } catch (NumberFormatException e) {
-            System.out.println("Please enter command with a valid task number e.g. 'mark 2'");
-        }
-    }
-    public void listTask() { //List all added tasks in the list, print it in console
-        int tasks = list.size();
-        if (tasks == 0) {
-            System.out.println("No tasks added yet! Try typing tasks to me, I will add them to list");
+    /**
+     * Lists all tasks in the task list.
+     */
+    private void listTasks() throws BrainrotException {
+        if (tasks.size() == 0) {
+            System.out.println("No tasks added yet! Try typing tasks to me, I will add them to the list.");
         } else {
-            //System.out.println("Here are the tasks in your list:");
-            for (int i = 0; i < tasks; i++) {
-                Task task = list.get(i);
-                System.out.println( (i + 1) + "." + task.toString());
+            for (int i = 0; i < tasks.size(); i++) {
+                System.out.println((i + 1) + "." + tasks.getTask(i));
             }
         }
     }
-    public void addToList(String input, String type) { //add the input task into list
-        if (input == "") {
-            System.out.println("Description cannot be empty");
-        } else {
-            switch (type) {
-                case "T":
-                    ToDos t = new ToDos(input, false);
-                    list.add(t);
-                    printAddedCase(t);
-                    break;
-                case "D":
-                    String[] parts = input.split("/by", 2);
-                    if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
-                        System.out.println("Error: Please specify a valid description and deadline.");
-                        return;
-                    }
-                    Deadlines d = new Deadlines(parts[0].trim(), parts[1].trim(), false);
-                    list.add(d);
-                    printAddedCase(d);
-                    break;
-                case "E":
-                    String[] parts1 = input.split("/from", 2);
-                    if (parts1.length < 2) {
-                        System.out.println("Error: Please specify a valid description, start, and end time.");
-                        return;
-                    }
 
-                    String description = parts1[0].trim();
-                    String[] timeParts = parts1[1].split("/to", 2);
-                    if (timeParts.length < 2 || description.isEmpty() || timeParts[0].trim().isEmpty() || timeParts[1].trim().isEmpty()) {
-                        System.out.println("Error: Please specify a valid description, start, and end time.");
-                        return;
-                    }
-                    Events e = new Events(description, timeParts[0].trim(), timeParts[1].trim(), false);
-                    list.add(e);
-                    printAddedCase(e);
-                    break;
-                default:
-                    System.out.println("Unknown task type.");
+    /**
+     * Marks a task as done.
+     *
+     * @param details The index of the task to mark as done.
+     * @throws BrainrotException If the index is invalid.
+     */
+    private void markTaskAsDone(String details) throws BrainrotException {
+        int index = parseIndex(details);
+        Task task = tasks.getTask(index);
+        task.markAsDone();
+        System.out.println("Nice! I've marked this task as done:");
+        System.out.println("  " + task);
+    }
+
+    /**
+     * Marks a task as undone.
+     *
+     * @param details The index of the task to mark as undone.
+     * @throws BrainrotException If the index is invalid.
+     */
+    private void markTaskAsUndone(String details) throws BrainrotException {
+        int index = parseIndex(details);
+        Task task = tasks.getTask(index);
+        task.markAsUndone();
+        System.out.println("OK, I've marked this task as not done yet:");
+        System.out.println("  " + task);
+    }
+
+    /**
+     * Deletes a task from the task list.
+     *
+     * @param details The index of the task to delete.
+     * @throws BrainrotException If the index is invalid.
+     */
+    private void deleteTask(String details) throws BrainrotException {
+        int index = parseIndex(details);
+        Task task = tasks.getTask(index);
+        tasks.deleteTask(index);
+        System.out.println("Noted. I've removed this task:");
+        System.out.println("  " + task);
+        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+    }
+
+    /**
+     * Adds a todo task to the task list.
+     *
+     * @param details The description of the todo task.
+     * @throws BrainrotException If the description is empty.
+     */
+    private void addTodo(String details) throws BrainrotException {
+        if (details.isEmpty()) {
+            throw new BrainrotException("The description of a todo cannot be empty.");
+        }
+        Task task = new ToDos(details, false);
+        tasks.addTask(task);
+        ui.printAddedTask(task, tasks.size());
+        storage.saveTasks(tasks.getTasks());
+    }
+
+    /**
+     * Adds a deadline task to the task list.
+     *
+     * @param details The description and deadline of the task.
+     * @throws BrainrotException If the description or deadline is invalid.
+     */
+    private void addDeadline(String details) throws BrainrotException {
+        String[] parts = details.split("/by", 2);
+        if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
+            throw new BrainrotException("Invalid deadline format. Use: deadline <description> /by <date>");
+        }
+        Task task = new Deadlines(parts[0].trim(), parts[1].trim(), false);
+        tasks.addTask(task);
+        ui.printAddedTask(task, tasks.size());
+        storage.saveTasks(tasks.getTasks());
+    }
+
+    /**
+     * Adds an event task to the task list.
+     *
+     * @param details The description, start time, and end time of the event.
+     * @throws BrainrotException If the description or times are invalid.
+     */
+    private void addEvent(String details) throws BrainrotException {
+        String[] parts = details.split("/from", 2);
+        if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
+            throw new BrainrotException("Invalid event format. Use: event <description> /from <start> /to <end>");
+        }
+        String[] timeParts = parts[1].split("/to", 2);
+        if (timeParts.length < 2 || timeParts[0].trim().isEmpty() || timeParts[1].trim().isEmpty()) {
+            throw new BrainrotException("Invalid event format. Use: event <description> /from <start> /to <end>");
+        }
+        Task task = new Events(parts[0].trim(), timeParts[0].trim(), timeParts[1].trim(), false);
+        tasks.addTask(task);
+        ui.printAddedTask(task, tasks.size());
+        storage.saveTasks(tasks.getTasks());
+    }
+
+    /**
+     * Parses the task index from the user input.
+     *
+     * @param details The string containing the task index.
+     * @return The parsed task index (zero-based).
+     * @throws BrainrotException If the index is invalid.
+     */
+    private int parseIndex(String details) throws BrainrotException {
+        try {
+            int index = Integer.parseInt(details) - 1;
+            if (index < 0 || index >= tasks.size()) {
+                throw new BrainrotException("Invalid task index.");
             }
+            return index;
+        } catch (NumberFormatException e) {
+            throw new BrainrotException("Please provide a valid task number.");
         }
     }
-    public void greeting() { //say hello :)
-        printSeparateBar();
-        System.out.println("Ni Hao fine shi\n" + "What can I do for you?\n");
-        printSeparateBar();
-    }
 
-    public void farewell() { //say byebye
-        printSeparateBar();
-        System.out.println("Till next time. See you!\n");
-        printSeparateBar();
-    }
     public static void main(String[] args) {
-        Green_Floyd  chatBot = new Green_Floyd();
-        String logo = " ____        _        \n"
-                + "|  _ \\ _   _| | _____ \n"
-                + "| | | | | | | |/ / _ \\\n"
-                + "| |_| | |_| |   <  __/\n"
-                + "|____/ \\__,_|_|\\_\\___|\n";
-        System.out.println("Hello from\n" + logo);
-        // load in history data from ./data/task_history.txt as strings
-
-        chatBot.greeting();
-        chatBot.run();
-        //chatBot.farewell();
+        new Green_Floyd("data/task_history.txt").run();
     }
 }
