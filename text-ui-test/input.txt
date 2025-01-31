@@ -1,5 +1,5 @@
 deadline return book /by Sunday
-event project meeting /from Mon 2pm /to 4pm
+event project meeting /from 2/12/2019 1400 2pm /to 2/12/2019 4pm
 mark 1
 unmark 1
 list

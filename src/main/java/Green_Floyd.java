@@ -61,6 +61,9 @@ public class Green_Floyd {
                 String by = parts[3];
                 return new Deadlines(description, by, status);
 
+            default:
+                System.out.println("Wrong format saved bro, check ur data format stored");
+
             }
         } catch (Exception e) {
             System.out.println("Skipping invalid line" + taskString);
@@ -260,7 +263,7 @@ public class Green_Floyd {
     }
     public void greeting() { //say hello :)
         printSeparateBar();
-        System.out.println("Hello! I'm Green Floyed\n" + "What can I do for you?\n");
+        System.out.println("Ni Hao fine shi\n" + "What can I do for you?\n");
         printSeparateBar();
     }
 
