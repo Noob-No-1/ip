@@ -16,6 +16,10 @@ public class Green_Floyd {
         }
     }
 
+    public TaskList getTasks() {
+        return tasks;
+    }
+
     public void run() {
         ui.greeting();
         boolean isExit = false;
@@ -39,7 +43,7 @@ public class Green_Floyd {
      * @return True if the command is "bye", false otherwise.
      * @throws BrainrotException If the command is invalid or an error occurs.
      */
-    private boolean handleCommand(String input) throws BrainrotException {
+    boolean handleCommand(String input) throws BrainrotException {
         String[] parsedInput = Parser.parseInput(input);
         String action = parsedInput[0];
         String details = parsedInput[1];
