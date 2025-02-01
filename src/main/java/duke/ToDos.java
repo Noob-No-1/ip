@@ -10,9 +10,18 @@ public class ToDos extends Task {
         this.description = description;
     }
 
+    /**
+     * Converts the ToDos object to string to be written into the data file
+     * @return a String of the file format of the Deadline object
+     */
     public String toFileFormat() { //T | 1 | read book
         return "T" + " | " + (super.isDone ? "1" : "0") + " | " + description;
     }
+
+    /**
+     * Converts the ToDos object to String format to be printed
+     * @return  a String format to be printed
+     */
     @Override
     public String toString() {
         return "[" + type + "]" + super.toString();

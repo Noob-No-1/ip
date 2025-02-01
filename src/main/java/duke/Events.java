@@ -24,20 +24,31 @@ public class Events extends Task {
 
     }
 
-    private LocalDateTime parseDateTime(String s) {
-
+    /**
+     * Parses the string of by to LocalDateTime type
+     * @param s a String of the deadline
+     * @return return the deadline in LocalDateTime type
+     */private LocalDateTime parseDateTime(String s) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
         return LocalDateTime.parse(s, formatter);
 
     }
-    public String toFileFormat() { //E | 0 | project meeting | Mon 2pm | 4pm
 
+    /**
+     * Converts the Event object to string to be written into the data file
+     * @return a String of the file format of the Deadline object
+     */
+    public String toFileFormat() { //E | 0 | project meeting | Mon 2pm | 4pm
         return "E" + " | " + (super.isDone ? "1" : "0") + " | " + description + " | " + from_str + " | " + to_str;
     }
 
+
+    /**
+     * Converts the Event object to String format to be printed
+     * @return  a String format to be printed
+     */
     @Override
     public String toString() {
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd yyyy, hh:mm a");
         return "[E]" + super.toString() + " (from: " + from.format(formatter) + " to: " + to.format(formatter) + ")";
 

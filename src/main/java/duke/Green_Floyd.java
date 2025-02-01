@@ -5,6 +5,10 @@ public class Green_Floyd {
     private TaskList tasks;
     private Ui ui;
 
+    /**
+     * Constructs a Goofy ahh Green_Floyd object
+     * @param filePath a String of the data file
+     */
     public Green_Floyd(String filePath) {
         ui = new Ui();
         storage = new Storage(filePath);
@@ -16,10 +20,17 @@ public class Green_Floyd {
         }
     }
 
+    /**
+     * Gets the private task list
+     * @return the inner task list
+     */
     public TaskList getTasks() {
         return tasks;
     }
 
+    /**
+     * Runs the main logic
+     */
     public void run() {
         ui.greeting();
         boolean isExit = false;
@@ -72,6 +83,9 @@ public class Green_Floyd {
             break;
         case "event":
             addEvent(details);
+            break;
+        case "find":
+            findTask(details);
             break;
         default:
             throw new BrainrotException("Unknown command: " + action);
@@ -139,7 +153,7 @@ public class Green_Floyd {
     }
 
     /**
-     * Adds a todo task to the task list.
+     * Adds a ToDos task to the task list.
      *
      * @param details The description of the todo task.
      * @throws BrainrotException If the description is empty.
@@ -193,6 +207,26 @@ public class Green_Floyd {
     }
 
     /**
+     * Prints tasks that match the keyword provided
+     * @param details keyword from user input
+     * @throws BrainrotException
+     */
+    public void findTask(String details) throws BrainrotException {
+        System.out.println("Here are the matching tasks in your list:");
+        int matchCount = 0;
+        for (int i = 0; i < tasks.size(); i++) {
+            Task task = tasks.getTask(i);
+            if (task.getDescription().contains(details)) {
+                System.out.println((matchCount + 1) + "." + task);
+                matchCount++;
+            }
+        }
+        if (matchCount == 0) {
+            System.out.println("No tasks found with the keyword: " + details);
+        }
+    }
+
+    /**
      * Parses the task index from the user input.
      *
      * @param details The string containing the task index.
@@ -211,6 +245,10 @@ public class Green_Floyd {
         }
     }
 
+    /**
+     * Runs, Idk why we need to write JavaDoc for this method but it is what it is
+     * @param args args for main
+     */
     public static void main(String[] args) {
         new Green_Floyd("data/task_history.txt").run();
     }
