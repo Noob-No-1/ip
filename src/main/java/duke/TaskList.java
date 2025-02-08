@@ -80,4 +80,20 @@ public class TaskList {
     public int size() {
         return tasks.size();
     }
+
+    /**
+     * Returns a string representation of all tasks in the TaskList,
+     * with each task numbered sequentially.
+     *
+     * @return A string containing the list of tasks, each on a new line.
+     */
+    public String listTasks() {
+        StringBuilder listSummary = new StringBuilder();
+        for (int i = 0; i < tasks.size(); i++) {
+            listSummary.append((i + 1)).append(". ")
+                    .append(tasks.get(i).toString()).append("\n");
+
+        }
+        return listSummary.toString();
+    }
 }

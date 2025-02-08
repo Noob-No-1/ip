@@ -1,0 +1,28 @@
+.label {
+    -fx-background-color: linear-gradient(to bottom right, #66cc66, #909090); /* Very light green to light gray */
+    -fx-border-color: #000000; /* Black border */
+    -fx-border-width: 2px;
+    -fx-background-radius: 1em 1em 0 1em;
+    -fx-border-radius: 1em 1em 0 1em;
+    -fx-font-size: 18px;
+}
+
+.reply-label {
+    -fx-background-color: linear-gradient(to bottom right, #ffcc80, #ff6600); /* Orange gradient */
+    -fx-border-color: #d55e00; /* Darker orange/brown border */
+    -fx-background-radius: 1em 1em 1em 0;
+    -fx-border-radius: 1em 1em 1em 0;
+    -fx-font-size: 18px;
+}
+
+#displayPicture {
+    /* Shadow effect on image. */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.5, 5, 5);
+
+    /* Change size of image. */
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+
+    /* Rotate image clockwise by degrees. */
+    -fx-rotate: 0;
+}

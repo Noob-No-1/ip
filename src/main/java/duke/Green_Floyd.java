@@ -5,6 +5,8 @@ public class Green_Floyd {
     private TaskList tasks;
     private Ui ui;
 
+    private boolean isExit;
+
     /**
      * Constructs a Goofy ahh Green_Floyd object
      * @param filePath a String of the data file
@@ -38,7 +40,8 @@ public class Green_Floyd {
             try {
                 String fullCommand = ui.readCommand();
                 ui.printSeparateBar();
-                isExit = handleCommand(fullCommand);
+                handleCommand(fullCommand);
+                isExit = this.isExit;
             } catch (BrainrotException e) {
                 ui.showError(e.getMessage());
             } finally {
@@ -54,7 +57,7 @@ public class Green_Floyd {
      * @return True if the command is "bye", false otherwise.
      * @throws BrainrotException If the command is invalid or an error occurs.
      */
-    boolean handleCommand(String input) throws BrainrotException {
+    public String handleCommand(String input) throws BrainrotException {
         String[] parsedInput = Parser.parseInput(input);
         String action = parsedInput[0];
         String details = parsedInput[1];
@@ -62,47 +65,25 @@ public class Green_Floyd {
         switch (action) {
         case "bye":
             ui.bye();
-            return true;
+            isExit = true;
         case "list":
-            listTasks();
-            break;
+            return tasks.listTasks();
         case "mark":
-            markTaskAsDone(details);
-            break;
+            return markTaskAsDone(details);
         case "unmark":
-            markTaskAsUndone(details);
-            break;
+            return markTaskAsUndone(details);
         case "delete":
-            deleteTask(details);
-            break;
+            return deleteTask(details);
         case "todo":
-            addTodo(details);
-            break;
+            return addTodo(details);
         case "deadline":
-            addDeadline(details);
-            break;
+            return addDeadline(details);
         case "event":
-            addEvent(details);
-            break;
+            return addEvent(details);
         case "find":
-            findTask(details);
-            break;
+            return findTask(details);
         default:
-            throw new BrainrotException("Unknown command: " + action);
-        }
-        return false;
-    }
-
-    /**
-     * Lists all tasks in the task list.
-     */
-    private void listTasks() throws BrainrotException {
-        if (tasks.size() == 0) {
-            System.out.println("No tasks added yet! Try typing tasks to me, I will add them to the list.");
-        } else {
-            for (int i = 0; i < tasks.size(); i++) {
-                System.out.println((i + 1) + "." + tasks.getTask(i));
-            }
+            return "Bruh what you yapping about";
         }
     }
 
@@ -111,14 +92,14 @@ public class Green_Floyd {
      *
      * @param details The index of the task to mark as done.
      * @throws BrainrotException If the index is invalid.
+     * @return String message of the response from the bot
      */
-    private void markTaskAsDone(String details) throws BrainrotException {
+    private String markTaskAsDone(String details) throws BrainrotException {
         int index = parseIndex(details);
         Task task = tasks.getTask(index);
         task.markAsDone();
         storage.saveTasks(tasks.getTasks());
-        System.out.println("Nice! I've marked this task as done:");
-        System.out.println("  " + task);
+        return "Nice! I've marked this task as done:\n\n\t" + task.toString();
     }
 
     /**
@@ -127,13 +108,12 @@ public class Green_Floyd {
      * @param details The index of the task to mark as undone.
      * @throws BrainrotException If the index is invalid.
      */
-    private void markTaskAsUndone(String details) throws BrainrotException {
+    private String markTaskAsUndone(String details) throws BrainrotException {
         int index = parseIndex(details);
         Task task = tasks.getTask(index);
         task.markAsUndone();
         storage.saveTasks(tasks.getTasks());
-        System.out.println("OK, I've marked this task as not done yet:");
-        System.out.println("  " + task);
+        return "OK, I've marked this task as not done yet:\n\n\t" + task.toString();
     }
 
     /**
@@ -142,14 +122,12 @@ public class Green_Floyd {
      * @param details The index of the task to delete.
      * @throws BrainrotException If the index is invalid.
      */
-    private void deleteTask(String details) throws BrainrotException {
+    private String deleteTask(String details) throws BrainrotException {
         int index = parseIndex(details);
         Task task = tasks.getTask(index);
         tasks.deleteTask(index);
         storage.saveTasks(tasks.getTasks());
-        System.out.println("Noted. I've removed this task:");
-        System.out.println("  " + task);
-        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+        return ui.printDeletedTaskStr(task, tasks.size());
     }
 
     /**
@@ -158,14 +136,15 @@ public class Green_Floyd {
      * @param details The description of the todo task.
      * @throws BrainrotException If the description is empty.
      */
-    private void addTodo(String details) throws BrainrotException {
+    private String addTodo(String details) throws BrainrotException {
         if (details.isEmpty()) {
             throw new BrainrotException("The description of a todo cannot be empty.");
         }
         Task task = new ToDos(details, false);
         tasks.addTask(task);
-        ui.printAddedTask(task, tasks.size());
+        //ui.printAddedTask(task, tasks.size());
         storage.saveTasks(tasks.getTasks());
+        return ui.printAddedTaskStr(task, tasks.size());
     }
 
     /**
@@ -174,15 +153,16 @@ public class Green_Floyd {
      * @param details The description and deadline of the task.
      * @throws BrainrotException If the description or deadline is invalid.
      */
-    private void addDeadline(String details) throws BrainrotException {
+    private String addDeadline(String details) throws BrainrotException {
         String[] parts = details.split("/by", 2);
         if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
             throw new BrainrotException("Invalid deadline format. Use: deadline <description> /by <date>");
         }
         Task task = new Deadlines(parts[0].trim(), parts[1].trim(), false);
         tasks.addTask(task);
-        ui.printAddedTask(task, tasks.size());
+        //ui.printAddedTask(task, tasks.size());
         storage.saveTasks(tasks.getTasks());
+        return ui.printAddedTaskStr(task, tasks.size());
     }
 
     /**
@@ -191,7 +171,7 @@ public class Green_Floyd {
      * @param details The description, start time, and end time of the event.
      * @throws BrainrotException If the description or times are invalid.
      */
-    private void addEvent(String details) throws BrainrotException {
+    private String addEvent(String details) throws BrainrotException {
         String[] parts = details.split("/from", 2);
         if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
             throw new BrainrotException("Invalid event format. Use: event <description> /from <start> /to <end>");
@@ -202,8 +182,9 @@ public class Green_Floyd {
         }
         Task task = new Events(parts[0].trim(), timeParts[0].trim(), timeParts[1].trim(), false);
         tasks.addTask(task);
-        ui.printAddedTask(task, tasks.size());
+        //ui.printAddedTask(task, tasks.size());
         storage.saveTasks(tasks.getTasks());
+        return ui.printAddedTaskStr(task, tasks.size());
     }
 
     /**
@@ -211,19 +192,22 @@ public class Green_Floyd {
      * @param details keyword from user input
      * @throws BrainrotException
      */
-    public void findTask(String details) throws BrainrotException {
-        System.out.println("Here are the matching tasks in your list:");
+    public String findTask(String details) throws BrainrotException {
+        String message = "Here are the matching tasks in your list: \n\n\t";
         int matchCount = 0;
+        TaskList matched = new TaskList();
         for (int i = 0; i < tasks.size(); i++) {
             Task task = tasks.getTask(i);
             if (task.getDescription().contains(details)) {
-                System.out.println((matchCount + 1) + "." + task);
+                matched.addTask(task);
+                //System.out.println((matchCount + 1) + "." + task);
                 matchCount++;
             }
         }
         if (matchCount == 0) {
-            System.out.println("No tasks found with the keyword: " + details);
+            return "No tasks found with the keyword: " + details;
         }
+        return message + matched.listTasks();
     }
 
     /**

@@ -42,7 +42,22 @@ public class Ui {
             }
         }
     }
-
+    /**
+     * Executes the ListCommand by displaying the current tasks in the task list
+     * to the user. If the task list is empty, returns a String indicating that the list is empty
+     * is shown. Otherwise, returns a String representing a summary of the tasks.
+     *
+     * @param list The TaskList to be displayed.
+     * @return A String showing a list of the tasks.
+     */
+    public String listTask(TaskList list) { //List all added tasks in the list, print it in console
+        int tasks = list.size();
+        if (tasks == 0) {
+            return "No tasks added yet! Try typing tasks to me, I will add them to list";
+        } else {
+            return  list.listTasks();
+        }
+    }
     /**
      * Prints loading errors
      * @param message error message
@@ -78,6 +93,11 @@ public class Ui {
         System.out.println("Currently have " + taskCount + " tasks in your list");
     }
 
+    public String printAddedTaskStr (Task task, int taskCount) {
+        return "Got it, added tasks to the task list:" + ".\n\n" + task.toString() + "\n\n" +
+                "Currently have " + taskCount + " tasks in your list";
+    }
+
     /**
      * Prints delete task message when user deleted a task
      * @param task a task that is deleted
@@ -87,6 +107,11 @@ public class Ui {
         System.out.println("Noted. Deleted this task:");
         System.out.println("  " + task);
         System.out.println("Now you have " + taskCount + " tasks in the list.");
+    }
+
+    public String printDeletedTaskStr(Task task, int taskCount) {
+        return "Got it, deleted tasks to the task list:" + ".\n\n" + task.toString() + "\n\n" +
+                "Currently have " + taskCount + " tasks in your list";
     }
     /**
      * Prints separation line between messages

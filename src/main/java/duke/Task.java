@@ -16,7 +16,7 @@ abstract class Task {
      * @return a String indicating whether it is done or not
      */
     public String getStatus() {
-        return (isDone ?"Done!" :" ");
+        return (isDone ?"X" :" ");
     }
 
     /**
