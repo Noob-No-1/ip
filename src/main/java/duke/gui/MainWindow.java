@@ -1,5 +1,6 @@
 package duke.gui;
 
+import duke.BrainrotException;
 import duke.GreenFloyd;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -8,6 +9,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+
+import java.io.IOException;
+
 public class MainWindow extends AnchorPane {
     @FXML
     private ScrollPane scrollPane;
@@ -47,13 +51,23 @@ public class MainWindow extends AnchorPane {
                     DialogBox.getDukeDialog(response, botImage)
             );
             userInput.clear();
+        } catch (BrainrotException e) {
+            // Handle known user errors (e.g., invalid format, duplicate task)
+            dialogContainer.getChildren().addAll(
+                    DialogBox.getUserDialog(input, userImage),
+                    DialogBox.getDukeDialog("Error: " + e.getMessage(), botImage)
+            );
         } catch (Exception e) {
+            // Catch all other unexpected errors
             dialogContainer.getChildren().addAll(
                     DialogBox.getUserDialog(input, userImage),
                     DialogBox.getDukeDialog("Oops, an unknown error occurred...", botImage)
             );
-            userInput.clear();
+            e.printStackTrace(); // Log error details for debugging
+        } finally {
+            userInput.clear(); // Always clear input after processing
         }
+
 
     }
 }

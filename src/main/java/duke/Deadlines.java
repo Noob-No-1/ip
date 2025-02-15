@@ -42,6 +42,10 @@ public class Deadlines extends Task {
         return "D" + " | " + (super.isDone ? "1" : "0") + " | " + description + " | " + by_str;
     }
 
+    public String getDueDate() {
+        return by_str;
+    }
+
     /**
      * Converts the Deadline object to String format to be printed
      * @return  a String format to be printed

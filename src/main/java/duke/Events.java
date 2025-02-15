@@ -24,6 +24,14 @@ public class Events extends Task {
 
     }
 
+    public String getFrom_str() {
+        return from_str;
+    }
+
+    public String getTo_str() {
+        return to_str;
+    }
+
     /**
      * Parses the string of by to LocalDateTime type
      * @param s a String of the deadline

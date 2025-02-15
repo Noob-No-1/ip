@@ -140,6 +140,10 @@ public class GreenFloyd {
         if (details.isEmpty()) {
             throw new BrainrotException("The description of a todo cannot be empty.");
         }
+        String description = details.trim();
+        if (checkForDuplicateTask(description)) {
+            return "The task already exists!";
+        }
         Task task = new ToDos(details, false);
         tasks.addTask(task);
         storage.saveTasks(tasks.getTasks());
@@ -156,6 +160,12 @@ public class GreenFloyd {
         String[] parts = details.split("/by", 2);
         if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
             throw new BrainrotException("Invalid deadline format. Use: deadline <description> /by <date>");
+        }
+        String description = parts[0].trim();
+        String dueDate = parts[1].trim();
+
+        if (checkForDuplicateTask(description, dueDate)) {
+            return "The task already exists!";
         }
         Task task = new Deadlines(parts[0].trim(), parts[1].trim(), false);
         tasks.addTask(task);
@@ -178,10 +188,62 @@ public class GreenFloyd {
         if (timeParts.length < 2 || timeParts[0].trim().isEmpty() || timeParts[1].trim().isEmpty()) {
             throw new BrainrotException("Invalid event format. Use: event <description> /from <start> /to <end>");
         }
+        String description = parts[0].trim();
+        String startTime = parts[1].trim();
+        String endTime = parts[2].trim();
+
+        if (checkForDuplicateTask(description, startTime, endTime)) {
+            return "The task already exists!";
+        }
         Task task = new Events(parts[0].trim(), timeParts[0].trim(), timeParts[1].trim(), false);
         tasks.addTask(task);
         storage.saveTasks(tasks.getTasks());
         return ui.printAddedTaskStr(task, tasks.size());
+    }
+
+    /**
+     * Checks if a duplicate Event task exists in the task list.
+     *
+     * @param description The event description.
+     * @param startTime The start time of the event.
+     * @param endTime The end time of the event.
+     * @return True if a duplicate event exists, otherwise false.
+     */
+    private boolean checkForDuplicateTask(String description, String startTime, String endTime) {
+        return tasks.getTasks().stream()
+                .filter(task -> task instanceof Events)
+                .map(task -> (Events) task)
+                .anyMatch(event -> event.getDescription().equalsIgnoreCase(description) &&
+                        event.getFrom_str().equals(startTime) &&
+                        event.getTo_str().equals(endTime));
+    }
+
+    /**
+     * Checks if a duplicate Deadline task exists in the task list.
+     *
+     * @param description The deadline description.
+     * @param dueDate The due date of the deadline.
+     * @return True if a duplicate deadline exists, otherwise false.
+     */
+    private boolean checkForDuplicateTask(String description, String dueDate) {
+        return tasks.getTasks().stream()
+                .filter(task -> task instanceof Deadlines)
+                .map(task -> (Deadlines) task)
+                .anyMatch(deadline -> deadline.getDescription().equalsIgnoreCase(description) &&
+                        deadline.getDueDate().equals(dueDate));
+    }
+
+    /**
+     * Checks if a duplicate Todo task exists in the task list.
+     *
+     * @param description The todo description.
+     * @return True if a duplicate todo exists, otherwise false.
+     */
+    private boolean checkForDuplicateTask(String description) {
+        return tasks.getTasks().stream()
+                .filter(task -> task instanceof ToDos)
+                .map(task -> (ToDos) task)
+                .anyMatch(todo -> todo.getDescription().equalsIgnoreCase(description));
     }
 
     /**
