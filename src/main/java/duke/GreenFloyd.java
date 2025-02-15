@@ -1,6 +1,6 @@
 package duke;
 
-public class Green_Floyd {
+public class GreenFloyd {
     private Storage storage;
     private TaskList tasks;
     private Ui ui;
@@ -8,10 +8,10 @@ public class Green_Floyd {
     private boolean isExit;
 
     /**
-     * Constructs a Goofy ahh Green_Floyd object
+     * Constructs a Goofy ahh GreenFloyd object
      * @param filePath a String of the data file
      */
-    public Green_Floyd(String filePath) {
+    public GreenFloyd(String filePath) {
         ui = new Ui();
         storage = new Storage(filePath);
         try {
@@ -142,7 +142,6 @@ public class Green_Floyd {
         }
         Task task = new ToDos(details, false);
         tasks.addTask(task);
-        //ui.printAddedTask(task, tasks.size());
         storage.saveTasks(tasks.getTasks());
         return ui.printAddedTaskStr(task, tasks.size());
     }
@@ -160,7 +159,6 @@ public class Green_Floyd {
         }
         Task task = new Deadlines(parts[0].trim(), parts[1].trim(), false);
         tasks.addTask(task);
-        //ui.printAddedTask(task, tasks.size());
         storage.saveTasks(tasks.getTasks());
         return ui.printAddedTaskStr(task, tasks.size());
     }
@@ -182,7 +180,6 @@ public class Green_Floyd {
         }
         Task task = new Events(parts[0].trim(), timeParts[0].trim(), timeParts[1].trim(), false);
         tasks.addTask(task);
-        //ui.printAddedTask(task, tasks.size());
         storage.saveTasks(tasks.getTasks());
         return ui.printAddedTaskStr(task, tasks.size());
     }
@@ -200,7 +197,6 @@ public class Green_Floyd {
             Task task = tasks.getTask(i);
             if (task.getDescription().contains(details)) {
                 matched.addTask(task);
-                //System.out.println((matchCount + 1) + "." + task);
                 matchCount++;
             }
         }
@@ -229,11 +225,7 @@ public class Green_Floyd {
         }
     }
 
-    /**
-     * Runs, Idk why we need to write JavaDoc for this method but it is what it is
-     * @param args args for main
-     */
     public static void main(String[] args) {
-        new Green_Floyd("data/task_history.txt").run();
+        new GreenFloyd("data/task_history.txt").run();
     }
 }

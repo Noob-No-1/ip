@@ -35,7 +35,6 @@ public class Ui {
         if (tasks == 0) {
             System.out.println("No tasks added yet! Try typing tasks to me, I will add them to list");
         } else {
-            //System.out.println("Here are the tasks in your list:");
             for (int i = 0; i < tasks; i++) {
                 Task task = list.get(i);
                 System.out.println( (i + 1) + "." + task.toString());
