@@ -1,6 +1,6 @@
-package duke.GUI;
+package duke.gui;
 
-import duke.Green_Floyd;
+import duke.GreenFloyd;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -18,7 +18,7 @@ public class MainWindow extends AnchorPane {
     @FXML
     private Button sendButton;
 
-    private Green_Floyd bot;
+    private GreenFloyd bot;
 
     private Image userImage = new Image(this.getClass().getResourceAsStream("/images/nerd_emoji_by_mar34568_dihon0i.png"));
     private Image botImage = new Image(this.getClass().getResourceAsStream("/images/skibidi_toilet_png_meme_by_kylewithem_dhpztml.png"));
@@ -29,7 +29,7 @@ public class MainWindow extends AnchorPane {
     }
 
     /** Injects the Duke instance */
-    public void setGreenFloyd(Green_Floyd g) {
+    public void setGreenFloyd(GreenFloyd g) {
         bot = g;
     }
 
