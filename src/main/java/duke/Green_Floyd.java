@@ -61,7 +61,7 @@ public class Green_Floyd {
         String[] parsedInput = Parser.parseInput(input);
         String action = parsedInput[0];
         String details = parsedInput[1];
-
+        assert action != null : "Empty action field";
         switch (action) {
         case "bye":
             ui.bye();
