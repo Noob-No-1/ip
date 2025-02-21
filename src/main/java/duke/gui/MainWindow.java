@@ -46,8 +46,8 @@ public class MainWindow extends AnchorPane {
     }
 
     /**
-     * Creates two dialog boxes, one echoing user input and the other containing Duke's reply and then appends them to
-     * the dialog container. Clears the user input after processing.
+     * Creates two dialog boxes for user input and chatbot's reply and then appends them to
+     * the dialog container.
      */
     @FXML
     private void handleUserInput() {
@@ -71,9 +71,9 @@ public class MainWindow extends AnchorPane {
                     DialogBox.getUserDialog(input, userImage),
                     DialogBox.getDukeDialog("Oops, an unknown error occurred...", botImage)
             );
-            e.printStackTrace(); // Log error details for debugging
+            e.printStackTrace();
         } finally {
-            userInput.clear(); // Always clear input after processing
+            userInput.clear();
         }
     }
 }
