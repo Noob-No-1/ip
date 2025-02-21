@@ -18,7 +18,7 @@ public class GreenFloyd {
      */
     public GreenFloyd(String filePath) {
         ui = new Ui();
-        storage = new Storage(filePath);
+        storage = new Storage();
         try {
             tasks = new TaskList(storage.load());
         } catch (BrainrotException e) {
@@ -39,7 +39,6 @@ public class GreenFloyd {
      * Runs the main logic
      */
     public void run() {
-        ui.greeting();
         boolean isExit = false;
         while (!isExit) {
             try {
@@ -193,8 +192,8 @@ public class GreenFloyd {
             throw new BrainrotException("Invalid event format. Use: event <description> /from <start> /to <end>");
         }
         String description = parts[0].trim();
-        String startTime = parts[1].trim();
-        String endTime = parts[2].trim();
+        String startTime = timeParts[0].trim();
+        String endTime = timeParts[1].trim();
 
         if (checkForDuplicateTask(description, startTime, endTime)) {
             return "The task already exists!";

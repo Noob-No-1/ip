@@ -49,7 +49,9 @@ application {
 shadowJar {
     archiveBaseName = "duke"
     archiveClassifier = null
+    archiveVersion = "1.0"
 }
+
 
 run{
     standardInput = System.in

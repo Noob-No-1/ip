@@ -2,6 +2,7 @@ package duke;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -14,8 +15,45 @@ import java.util.Scanner;
 public class Storage {
     private String filePath;
 
-    public Storage(String filePath) {
-        this.filePath = filePath;
+    /**
+     * Constructs a Storage instance that ensures the storage file exists.
+     */
+    public Storage() {
+        this.filePath = getJarDirectory() + File.separator + "data" + File.separator + "history.txt";
+        ensureFileExists();
+    }
+
+    /**
+     * Gets the directory of the JAR file at runtime.
+     * If running in an IDE, falls back to the working directory.
+     */
+    private String getJarDirectory() {
+        try {
+            File jarFile = new File(Storage.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            return jarFile.getParentFile().getAbsolutePath(); // Get JAR location
+        } catch (Exception e) {
+            return System.getProperty("user.dir"); // Fallback: current working directory
+        }
+    }
+
+    /**
+     * Ensures that the data folder and file exist.
+     */
+    private void ensureFileExists() {
+        try {
+            File dir = new File(getJarDirectory(), "data");
+            if (!dir.exists()) {
+                dir.mkdirs(); // Create "data" directory if missing
+            }
+
+            File file = new File(filePath);
+            if (!file.exists()) {
+                file.createNewFile(); // Create history.txt if missing
+                System.out.println("Created new data file at: " + file.getAbsolutePath());
+            }
+        } catch (IOException e) {
+            System.err.println("Error creating storage file: " + e.getMessage());
+        }
     }
 
     /**

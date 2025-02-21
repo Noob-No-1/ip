@@ -3,6 +3,4 @@ T | 0 | join sports club
 T | 0 | shit my pants
 D | 1 | wash my pants | 12/12/2024 1800
 T | 0 | kms
-T | 0 | kms
-T | 0 | return book
 D | 0 | shit my pants | 22/12/2024 1200

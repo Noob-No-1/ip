@@ -38,6 +38,13 @@ public class MainWindow extends AnchorPane {
         bot = g;
     }
 
+    public void showGreeting() {
+        String greetingMessage = "Nihao fine shi😛 \nHow can I assist you today?";
+        dialogContainer.getChildren().add(
+                DialogBox.getDukeDialog(greetingMessage, botImage)
+        );
+    }
+
     /**
      * Creates two dialog boxes, one echoing user input and the other containing Duke's reply and then appends them to
      * the dialog container. Clears the user input after processing.

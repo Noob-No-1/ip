@@ -1,6 +1,9 @@
 package duke;
 
 import duke.Task;
+import javafx.animation.PauseTransition;
+import javafx.application.Platform;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -21,10 +24,16 @@ public class Ui {
     }
 
     /**
-     * Generates goodbye message and exit the app
+     * Generates goodbye message and exit the app after 2 seconds
      */
     public String bye() {
-        return "See you fine shiz =_=";
+        String message =  "See you fine shiz =_=";
+        Platform.runLater(() -> {
+            PauseTransition delay = new PauseTransition(Duration.seconds(2));
+            delay.setOnFinished(event -> Platform.exit());
+            delay.play();
+        });
+        return message;
     }
 
     /**

@@ -26,6 +26,7 @@ public class Main extends Application {
             Scene scene = new Scene(ap);
             stage.setScene(scene);
             fxmlLoader.<MainWindow>getController().setGreenFloyd(bot);
+            fxmlLoader.<MainWindow>getController().showGreeting();
             stage.show();
         } catch (IOException e) {
             throw new RuntimeException(e);
