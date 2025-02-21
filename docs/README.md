@@ -158,10 +158,12 @@ Tasks are automatically saved to `data/task_history.txt` and loaded when the cha
 ❌ No, but you can delete and re-add a task.
 
 ### **Q: How does the chatbot save tasks?**
-✅ All tasks are saved in `data/task_history.txt`.
+✅ All tasks are saved in a file that is created locally on your computer as the programme runs.
 
 ---
 
 ## **🎉 Happy Task Managing with GreenFloyd!**
 💬 Questions? Open an **issue** on GitHub!
+
+**Some code (less than 20 percent) and documentations are done with the help of GitHub Copilot or chatGPT for better quality**
 
