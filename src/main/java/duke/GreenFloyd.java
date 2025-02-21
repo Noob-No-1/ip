@@ -39,7 +39,6 @@ public class GreenFloyd {
         while (!isExit) {
             try {
                 String fullCommand = ui.readCommand();
-                ui.printSeparateBar();
                 handleCommand(fullCommand);
                 isExit = this.isExit;
             } catch (BrainrotException e) {
@@ -64,8 +63,8 @@ public class GreenFloyd {
         assert action != null : "Empty action field";
         switch (action) {
         case "bye":
-            ui.bye();
             isExit = true;
+            return ui.bye();
         case "list":
             return tasks.listTasks();
         case "mark":

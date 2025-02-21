@@ -11,19 +11,15 @@ public class Ui {
     /**
      * Genrates welcome messages when app is started
      */
-    public void greeting() { //say hello :)
-        printSeparateBar();
-        System.out.println("Ni Hao fine shiz\n" + "What can I do for you?\n");
-        printSeparateBar();
+    public String greeting() {
+        return "Ni Hao fine shiz\n" + "What can I do for you?\n";
     }
 
     /**
      * Generates goodbye message and exit the app
      */
-    public void bye() {
-        printSeparateBar();
-        System.out.println("See you fine shiz =_=");
-        printSeparateBar();
+    public String bye() {
+        return "See you fine shiz =_=";
     }
 
     /**

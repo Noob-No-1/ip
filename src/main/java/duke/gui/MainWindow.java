@@ -32,7 +32,7 @@ public class MainWindow extends AnchorPane {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
     }
 
-    /** Injects the Duke instance */
+    /** Injects the GreenFloyd instance */
     public void setGreenFloyd(GreenFloyd g) {
         bot = g;
     }
@@ -67,7 +67,5 @@ public class MainWindow extends AnchorPane {
         } finally {
             userInput.clear(); // Always clear input after processing
         }
-
-
     }
 }
