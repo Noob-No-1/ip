@@ -5,6 +5,10 @@ import duke.Task;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * The Event class represents a task with a specific time period.
+ * It extends the Task class to provide a representation for tasks that have a start and end time.
+ */
 public class Events extends Task {
     private final String type = "E";
     public LocalDateTime from;

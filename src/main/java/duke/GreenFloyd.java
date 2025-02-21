@@ -1,5 +1,10 @@
 package duke;
 
+/**
+ * The GreenFloyd class is the main entry point for the chatbot application.
+ * It initializes the necessary components (UI, Storage, TaskList) and handles
+ * the main event loop for user interaction and command handling.
+ */
 public class GreenFloyd {
     private Storage storage;
     private TaskList tasks;

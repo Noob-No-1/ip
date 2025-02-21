@@ -2,6 +2,10 @@ package duke;
 
 import duke.Task;
 
+/**
+ * The Todo class represents a task of type "todo".
+ * It extends the Task class to provide a specific representation for todo tasks.
+ */
 public class ToDos extends Task {
     private final String type = "T";
     public String description;

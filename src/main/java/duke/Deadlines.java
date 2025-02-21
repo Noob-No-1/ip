@@ -4,6 +4,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * The Deadline class represents a task with a specific deadline.
+ * It extends the Task class to provide a representation for tasks that have a deadline.
+ */
 public class Deadlines extends Task {
     public LocalDateTime by;
 

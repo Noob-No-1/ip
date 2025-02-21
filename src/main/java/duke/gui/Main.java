@@ -9,6 +9,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * A GUI for GreenFloyd using FXML.
+ */
 public class Main extends Application {
     private GreenFloyd bot = new GreenFloyd("data/task_history.txt");
 

@@ -1,5 +1,10 @@
 package duke;
 
+/**
+ * The Task class represents a task with a description and a completion status.
+ * It provides methods to mark the task as done or undone, retrieve the task description,
+ * and obtain string representations of the task for display and saving.
+ */
 abstract class Task {
     protected String description;
     public boolean isDone;
