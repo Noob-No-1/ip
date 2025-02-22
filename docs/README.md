@@ -14,8 +14,8 @@ GreenFloyd helps you organize your **Todos, Deadlines, and Events** effortlessly
 ---
 
 ## **🖼 Product Screenshot**
-![GreenFloyd Chatbot](Ui.png)
 
+![GreenFloyd Chatbot](Ui.png)
 ---
 
 ## **🚀 Installation & Setup**
